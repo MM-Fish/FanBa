@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('result_css').getContent(); ?>
+  </head>
+  <body>
+    <div class="container">
+      <?!= HtmlService.createHtmlOutputFromFile('header').getContent(); ?>
+      
+      <div class="result-main">
+        <h2>送信が完了しました。</h2>
+      </div>
+      <fotter>
+        <a href="https://www.uchidalab.com" >&copy;UCHIDA Lab</a>
+      </fotter>
+    </div>
+    <?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>
+  </body>
+</html>
+
+

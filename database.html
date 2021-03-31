@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
+  </head>
+
+  <body>
+    <div class="container">
+      <?!= HtmlService.createHtmlOutputFromFile('header').getContent(); ?>
+      
+      <div class="main">
+        <form class="database-link" method="post" action="#">
+          <div class="form-title">
+            <h2>月牧場データ</h2>
+          </div>
+        
+          <h3>牧場コード</h3>
+          <!-- 牧場コードのプルダウン -->
+          <div class="pulldown" id="pulldown-farmcode-wrap"></div>
+
+          <h3>年度・月</h3>
+          <ul>
+            <li><select class="question question-select year-month" name="year" id="year"></select></li>
+            <li><select class="question question-select year-month" name="month" id="month"></select></li>
+          </ul>
+          
+          <div id="data-form-area">
+          </div>
+          <input class="input-button" id="add-data-form" type="button" value="データ追加" onclick="addDataForm()">
+          
+          <ul class="button-wrap">
+            <li class="button-left"><input class="input-button" type="submit" value="送信する"></li>
+            <li class="button-right"><input class="input-button" type="reset" value="リセット"></li>
+          </ul>
+        </form>
+      </div>
+      <fotter>
+        <a href="https://www.uchidalab.com" >&copy;UCHIDA Lab</a>
+      </fotter>
+    </div>
+    <?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('database_js').getContent(); ?>
+  </body>
+</html>

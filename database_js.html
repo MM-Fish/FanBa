@@ -1,0 +1,117 @@
+<script type="text/javascript">
+  var data_form_id = 1;
+
+  // １．牧場コードプルダウン作成(親カテゴリ)
+  // ①htmlファイルのプルダウンを埋め込む場所に下記のコードを埋め込む
+  // <div class="pulldown" id="pulldown-farmcode-wrap"></div>
+
+  // ②div要素作成
+  // makePulldownDiv("id名", "表示名", "⑤の関数名(this)")
+  makePulldownDiv("farmcode", "", null)
+  
+  // ③スプシからデータを取得する関数getFarmcodeWithName()をpulldown.gsに作成する
+
+  // ④プルダウンの選択肢をスプシから取得し作成する関数を作成する
+  function makeFarmcodePulldown(data){
+    makePulldown(data, "farmcode")
+  };
+
+  // ⑤スプシから選択肢を取得しプルダウンを作成
+  google.script.run.withSuccessHandler(makeFarmcodePulldown).getFarmcodeWithName();
+  
+
+  // ２．年月プルダウン作成
+  makeYearPulldown("year")
+  makeMonthPulldown("month")
+
+
+  // ３．データフォーム追加
+  // ①クラス作成（子カテゴリの変換関数をまとめたクラス）
+  class DataFormFunc{
+    constructor(data_form_id){
+      this.data_form_id = data_form_id;
+    }
+    changeCategory1(element){
+      changeChildCategory(element, `category1_${this.data_form_id}`);
+    }
+    changeCategory2(element){
+      changeChildCategory(element, `category2_${this.data_form_id}`);
+    }
+    changeCategory3(element){
+      changeChildCategory(element, `category3_${this.data_form_id}`);
+    }
+    changeCpAndN(element){
+      console.log(element);
+      let parentValue = element.value
+      var element_id = element.id;
+      var data_form_id = element_id.substr(10);
+      console.log(data_form_id);
+      google.script.run.withSuccessHandler(inputCpAndN).getCpAndN(parentValue);
+      function inputCpAndN(data){
+        // データを取得する
+        var json = JSON.parse(data);
+        console.log(json[0]);
+        console.log(document.getElementById(`CP_${data_form_id}`));
+        document.getElementById(`CP_${data_form_id}`).value = json[0];
+        document.getElementById(`N_${data_form_id}`).value = json[1];
+      };
+    }
+  };
+
+  // ②インスタンス作成（データフォーム最大10個まで）
+  instance_list = {}
+  for(var i=1; i<11; i++ ){
+    instance_list[i] = new DataFormFunc(i);
+  }
+
+  // ③追加ボタン削除関数
+  function delete_add_button(){
+    var add_button = document.getElementById('add-data-form');
+    add_button.style.display = "none";
+  };
+  
+  // ④データフォーム追加関数作成
+  function addDataForm(){
+    // ④-1.データフォームhtml内容
+    var data_form = `<h3>肥料データ内容${data_form_id}　(最大10個まで)</h3>`
+    +'<h3>In/Out</h3>'
+    +'<ul class="button-wrap">'
+    +`<li class="in-out button-left"><input type="radio" class="input-button question-radio" name="inout_${data_form_id}" id="radio-in_${data_form_id}" onclick="instance_list[${data_form_id}].changeCategory1(this)" value="Input" checked="checked"><label class="label-radio" for="radio-in_${data_form_id}">In</label></li>`
+    +`<li class="in-out button-right"><input type="radio" class="input-button question-radio" name="inout_${data_form_id}" id="radio-out_${data_form_id}" onclick="instance_list[${data_form_id}].changeCategory1(this)" value="Output"><label class="label-radio" for="radio-out_${data_form_id}">Out</label></li>`
+    +'</ul>'
+    +'<h3>分類</h3>'
+    +'<ul>'
+    +`<li><div class="pulldown" id="pulldown-category1_${data_form_id}-wrap">1</div></li>`
+    +`<li><div class="pulldown" id="pulldown-category2_${data_form_id}-wrap">2</div></li>`
+    +`<li><div class="pulldown" id="pulldown-category3_${data_form_id}-wrap">3</div></li>`
+    +'</ul>'
+    +'<h3>内容量</h3>'
+    +'<ul>'
+    +`<li><input type="number" step = "1" class="question question-text" name="amount_${data_form_id}" maxlength="8" placeholder="牛(頭数)or面積(ha)"></li>`
+    +`<li><input type="number" step = "1" class="question question-text" name="kgperbag_${data_form_id}" maxlength="8" placeholder="単位当たり肥料量(㎏/頭)or(kg/ha)"></li>`
+    +`<li><input type="number" step = "0.01" class="question question-text" name="CP_${data_form_id}" id="CP_${data_form_id}" maxlength="3" placeholder="タンパク質率(%)"></li>`
+    +`<li><input type="number" step = "0.01" class="question question-text" name="N_${data_form_id}" id="N_${data_form_id}" maxlength="3" placeholder="窒素量(%)"></li>`
+    +'</ul>'
+    +'<h3>備考</h3>'
+    +`<textarea type="text" class="question question-memo" name="memo_${data_form_id}" id="Text_${data_form_id}" value="" placeholder="メモ"></textarea>`
+    var data_form_div = document.createElement("div");
+    data_form_div.className = "data-form";
+    data_form_div.innerHTML = data_form
+    document.getElementById("data-form-area").appendChild(data_form_div);
+
+    // ④-2.分類プルダウン用のdiv要素作成
+    // makePulldownDiv("子カテゴリの名前", "表示名", "②の関数名(this)", childElementの有無)
+    makePulldownDiv(`category1_${data_form_id}`, "分類１：", `instance_list[${data_form_id}].changeCategory2(this)`, true)
+    makePulldownDiv(`category2_${data_form_id}`, "分類２：", `instance_list[${data_form_id}].changeCategory3(this)`, true)
+    makePulldownDiv(`category3_${data_form_id}`, "分類３：", `instance_list[${data_form_id}].changeCpAndN(this)`, true)
+    
+    // ④-3.分類１の初期値
+    var input_element = document.getElementById(`radio-in_${data_form_id}`);
+    instance_list[data_form_id].changeCategory1(input_element);
+
+    data_form_id++ ;
+    if (data_form_id == 11){
+      delete_add_button();
+    };
+  }
+</script>

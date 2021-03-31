@@ -1,0 +1,21 @@
+<script type="text/javascript">
+  // スプシとデータを連携しないプルダウン作成
+  makeYearPulldown("year")
+  makeMonthPulldown("month")
+  makeFarmingtypePulldown("farmingtype")
+  makeRegionPulldown("region")
+
+  // farmingtypeのプルダウン作成関数
+  function makeFarmingtypePulldown(elementName){
+    var valueList = ["sb", "fb", "fs", "gra"];
+    var innerHtmlList = ["つなぎ", "フリーバーン", "フリーストール", "放牧"];
+    makePulldownFromList(elementName, valueList, innerHtmlList);
+  }
+  
+  // regionのプルダウン作成関数
+  function makeRegionPulldown(elementName){
+    var valueList = ["NH", "CH", "EH", "SH"];
+    var innerHtmlList = ["道北", "道央", "道東", "道南"];
+    makePulldownFromList(elementName, valueList, innerHtmlList);
+  }
+</script>

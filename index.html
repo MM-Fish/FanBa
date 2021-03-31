@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <?!= HtmlService.createHtmlOutputFromFile('css').getContent(); ?>
+  </head>
+
+  <body>
+    <div class="container">
+      <?!= HtmlService.createHtmlOutputFromFile('header').getContent(); ?>
+
+      <div class="main">
+        <form class="index-link" method="post" action="#">    
+          <div class="form-title">
+            <h2>新規牧場登録</h2>
+          </div>
+
+          <h3>牧場情報</h3>
+          <ul>
+            <li><input class="question question-text" type="text" name="farmcode" placeholder="牧場コード"></li>
+            <li><input class="question question-text" type="text" name="farmname" placeholder="牧場名"></li>
+          </ul>
+          
+          <!-- 年度のプルダウン -->
+          <h3>年度・月</h3>
+          <ul>
+            <li><select class="question question-select year-month" name="year" id="year"></select></li>
+            <li><select class="question question-select year-month" name="month" id="month"></select></li>
+          </ul>
+
+          <h3>牧場面積</h3>
+          <ul>
+            <li><input class="question question-text" type="number" name="totalland" placeholder="総面積"></li>
+            <li><input class="question question-text" type="number" name="pasture" placeholder="採草地"></li>
+            <li><input class="question question-text" type="number" name="corn" placeholder="畑地"></li>
+            <li><input class="question question-text" type="number" name="grazing" placeholder="放牧地"></li>
+            <li><input class="question question-text" type="number" name="combined" placeholder="兼用地"></li>
+          </ul>
+
+          <h3>飼養頭数</h3>
+          <ul>
+            <li><input class="question question-text" type="number" name="totalcow" placeholder="総頭数"></li>
+            <li><input class="question question-text" type="number" name="milkingcow" placeholder="経産牛"></li>
+            <li><input class="question question-text" type="number" name="heifer" placeholder="育成牛"></li>
+          </ul>
+
+          <h3>飼養形態</h3>
+          <!-- 飼養形態のプルダウン -->
+          <ul>
+            <li><select class="question question-select" name="farmingtype" id="farmingtype"></select></li>
+          </ul>
+
+          <h3>地域</h3>
+          <!-- 地域のプルダウン -->
+          <ul>
+            <li><select class="question question-select" name="region" id="region"></select></li>
+          </ul>
+
+          <ul class="button-wrap">
+            <li class="button-left"><input class="input-button" type="submit" value="送信する"></li>
+            <li class="button-right"><input class="input-button" type="reset" value="リセット"></li>
+          </ul>
+        </form>
+      </div>
+      <fotter>
+        <a href="https://www.uchidalab.com" >&copy;UCHIDA Lab</a>
+      </fotter>
+    </div>
+    <?!= HtmlService.createHtmlOutputFromFile('js').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('index_js').getContent(); ?>
+  </body>
+</html>
+
+
+

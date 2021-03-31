@@ -1,0 +1,20 @@
+<script type="text/javascript">
+  // プルダウンを埋め込むdiv要素作成
+  makePulldownDiv("category1", "分類１", "changeCategory2(this)")
+  makePulldownDiv("category2", "分類２", null, true)
+
+  // プルダウンの選択肢をスプシから取得し作成
+  google.script.run.withSuccessHandler(makeParentPulldown).getCategory1();
+
+  // プルダウンの選択肢をスプシから取得し作成する関数
+  // 親カテゴリ
+  // 分類１
+  function makeParentPulldown(data){
+    makePulldown(data, "category1")
+  };
+  // 子カテゴリ
+  // 分類２
+  function changeCategory2(element){
+    changeChildCategory(element, "category2");
+  };
+</script>

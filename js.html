@@ -1,0 +1,137 @@
+<!-- Get通信，Post通信のためのリンク作成関連 -->
+<script type="text/javascript">
+  google.script.run.withSuccessHandler(setLink).getRootUrl();
+  function setLink(root_url){
+    console.log(root_url)
+    // var root_url = "https://script.google.com/macros/s/AKfycbz492vTiRneiTOboT3eN8r1f0EuKrApbgSfhDNKQggQsptLXrs/exec"
+    set_link(root_url, "index-link", null)
+    set_link(root_url, "composition-link", "composition")
+    set_link(root_url, "database-link", "database")
+  };
+  
+  function set_link(root_url, class_name, param){
+    var targets = document.getElementsByClassName(class_name);
+    if (param == null){
+      var url = root_url;
+    }else{
+      var url = root_url + "?p=" + param;
+    }
+    Array.prototype.forEach.call(targets, function(target){
+      if (target.tagName=="FORM"){
+        target.action = url;
+      }else if(target.tagName=="A"){
+        target.href = url;
+      };
+    });
+  };
+</script>
+
+
+<!-- スプシと連携しないプルダウンを作成するための関数群 -->
+<script type="text/javascript">
+  // 年のプルダウン作成関数
+  function makeYearPulldown(elementName){
+    var valueList = [...Array(17)].map((_, i) => i + 2014);
+    var innerHtmlList = [...Array(17)].map((_, i) => i + 2014);
+    makePulldownFromList(elementName, valueList, innerHtmlList);
+  }
+  
+  // 月のプルダウン作成関数
+  function makeMonthPulldown(elementName){
+    var valueList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", ""];
+    var innerHtmlList = [...Array(12)].map((_, i) => i + 1 + "月");
+    innerHtmlList.push("年間");
+    makePulldownFromList(elementName, valueList, innerHtmlList);
+  }
+  
+  // プルダウンの選択肢作成
+  function makePulldownFromList(elementName, valueList, innerHtmlList){
+    var element = document.getElementById(elementName);
+    document.createElement('option')
+    for(let i = 0; i < valueList.length; i++){
+      var option = document.createElement('option');
+      option.setAttribute('value', valueList[i]);
+      option.innerHTML = innerHtmlList[i];
+      element.appendChild(option);
+    };
+  }
+</script>
+
+<!-- スプシと連携するプルダウン作成のための関数群 -->
+<script type="text/javascript">
+  // プルダウンを埋め込むdiv要素作成する関数
+  function makePulldownDiv(elementName, labelName, onchangeFunction, childElement=false){    
+    // 最初にpulldownとprogressのどちらを表示させるか
+    if (childElement==true){
+      var pulldownDisplay="block"
+      var progressDisplay="none"
+    }else{
+      var pulldownDisplay="none"
+      var progressDisplay="block"
+    }
+
+    // onchange関数を埋め込むかどうか
+    if (onchangeFunction==null){
+      var selectTag = `<select class="question question-select" name="${elementName}" id="${elementName}">`
+    }else{
+      var selectTag = `<select class="question question-select" name="${elementName}" onchange=${onchangeFunction} id="${elementName}">`
+    }
+
+    // プルダウンを埋め込むdiv要素作成する
+    var pulldownDiv = `<div id="pulldown-${elementName}" style="display:${pulldownDisplay}">`
+      + selectTag
+      + '<option selected>選択して下さい</option>'
+      + '</select>'
+      + '</div>'
+      + `<div id="progress-${elementName}" style="display:${progressDisplay}">`
+      + '<img border="0" src="https://officeforest.org/wp/library/ProgressSpinner.gif" width="20" height="20">'
+      + '</div>'
+    // console.log(document.getElementById(`pulldown-${elementName}-wrap`))
+    document.getElementById(`pulldown-${elementName}-wrap`).innerHTML = pulldownDiv;
+  }
+
+  // スプシから取得したデータからプルダウンの選択肢を作成する関数
+  function makePulldown(data, elementName){
+    // データを取得する
+    var json = JSON.parse(data);
+    
+    // HTMLデータの作成
+    var html = "<option>選択して下さい</option>";
+    for(var i = 0;i<json.length;i++){
+      if(json[i] == "") break;
+      html += "<option>" + json[i] + "</option>"
+    }  
+    html += "</select>";
+    
+    // プルダウンの選択肢を作成
+    document.getElementById(elementName).innerHTML = html;
+    document.getElementById(`progress-${elementName}`).style.display = "none"
+    document.getElementById(`pulldown-${elementName}`).style.display = "block"
+  }
+
+  // 親カテゴリを変更した時に，子カテゴリのプルダウンの選択肢を作成する関数
+  function changeChildCategory(element, childElementName){
+    // console.log(childElementName);
+    // 親カテゴリの値を取得
+    let parentValue = element.value
+    
+    // 親カテゴリの値をもとに子カテゴリの値を変更
+    if(parentValue != "分類を選択して下さい"){
+      document.getElementById(`progress-${childElementName}`).style.display = "block"
+      document.getElementById(`pulldown-${childElementName}`).style.display = "none"
+      
+      // 子カテゴリのデータを取得してプルダウンの選択肢を作成する関数を実行
+      // 子カテゴリを増やした場合は，同様に条件分岐を追加
+      function makeChildPulldown(data){makePulldown(data, childElementName)};
+      if (~childElementName.indexOf("category1")){
+        google.script.run.withSuccessHandler(makeChildPulldown).getCategory1Childver(parentValue);
+      }
+      else if (~childElementName.indexOf("category2")){
+        google.script.run.withSuccessHandler(makeChildPulldown).getCategory2(parentValue);
+      }
+      else if (~childElementName.indexOf("category3")){
+        google.script.run.withSuccessHandler(makeChildPulldown).getCategory3(parentValue);
+      }
+    }
+  };
+</script>
